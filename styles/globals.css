@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Righteous&family=Bungee&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gradient-to-br from-game-gradient-from to-game-gradient-to text-white font-sans min-h-screen;
+}
+
+@layer components {
+  .game-button {
+    @apply bg-pine/90 p-4 rounded-lg 
+           shadow-md transition-all duration-300 
+           hover:bg-cozy-brown
+           hover:scale-105
+           active:scale-95
+           disabled:opacity-50 disabled:cursor-not-allowed
+           text-snow-white font-game tracking-wide
+           border-2 border-gold/50
+           hover:border-gold;
+  }
+
+  .input-field {
+    @apply p-3 rounded-lg bg-gray-800 border-2 border-gold/30
+           focus:border-gold focus:outline-none
+           transition-all duration-300
+           text-snow-white placeholder-gray-400;
+  }
+
+  .title-text {
+    @apply font-display text-transparent bg-clip-text 
+           bg-gradient-to-r from-candy-red to-gold
+           drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)];
+  }
+
+  .christmas-card {
+    @apply bg-gray-900/90 backdrop-blur-sm border-2 border-gold/30 
+           rounded-xl p-6 shadow-lg;
+  }
+}
