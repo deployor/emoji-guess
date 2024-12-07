@@ -1,48 +1,133 @@
 import { useState, useEffect } from 'react';
+import { security } from '../lib/security';
 
 export default function Game({ onGameEnd }) {
+  const [sessionId, setSessionId] = useState(null);
   const [question, setQuestion] = useState(null);
   const [options, setOptions] = useState([]);
-  const [answer, setAnswer] = useState('');
+  const [questionToken, setQuestionToken] = useState(null);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(parseInt(process.env.NEXT_PUBLIC_TIMER_DURATION));
   const [selectedOption, setSelectedOption] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);
+  const [correctAnswers, setCorrectAnswers] = useState([]);
+  const [clientData, setClientData] = useState({
+    mouseMovements: 0,
+    keyPresses: 0,
+    focusTime: 0,
+    clickPattern: []
+  });
+  const [deviceData, setDeviceData] = useState({
+    accelerometer: null,
+    touchEvents: [],
+    screenOrientation: null,
+    deviceMemory: navigator?.deviceMemory,
+    hardwareConcurrency: navigator?.hardwareConcurrency
+  });
 
   useEffect(() => {
-    fetchQuestion();
+    startGame();
   }, []);
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      onGameEnd(score);
+      onGameEnd(score, correctAnswers);
     }
     const timer = setInterval(() => setTimeLeft((t) => t - 1), 1000);
     return () => clearInterval(timer);
   }, [timeLeft]);
+
+  useEffect(() => {
+    const trackBehavior = () => {
+      setClientData(prev => ({
+        ...prev,
+        mouseMovements: prev.mouseMovements + 1
+      }));
+    };
+    
+    const trackKeyPress = () => {
+      setClientData(prev => ({
+        ...prev,
+        keyPresses: prev.keyPresses + 1
+      }));
+    };
+
+    window.addEventListener('mousemove', trackBehavior);
+    window.addEventListener('keydown', trackKeyPress);
+
+    return () => {
+      window.removeEventListener('mousemove', trackBehavior);
+      window.removeEventListener('keydown', trackKeyPress);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Request device sensors
+    if (window.DeviceMotionEvent) {
+      window.addEventListener('devicemotion', handleMotion);
+    }
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener('deviceorientation', handleOrientation);
+    }
+    
+    // Track touch dynamics
+    window.addEventListener('touchstart', handleTouch);
+    window.addEventListener('touchend', handleTouch);
+
+    return () => {
+      // ...cleanup listeners...
+    };
+  }, []);
+
+  const startGame = async () => {
+    const res = await fetch('/api/startGame', { method: 'POST' });
+    const data = await res.json();
+    setSessionId(data.sessionId);
+    fetchQuestion();
+  };
 
   const fetchQuestion = async () => {
     const res = await fetch('/api/getQuestion');
     const data = await res.json();
     setQuestion(data.emoji);
     setOptions(data.options);
-    setAnswer(data.answer);
+    setQuestionToken(data.questionToken);
     setSelectedOption('');
     setShowFeedback(false);
   };
 
-  const handleAnswer = (option) => {
+  const handleAnswer = async (option) => {
     setSelectedOption(option);
-    setShowFeedback(true);
-    if (option === answer) {
-      setScore(score + 1);
-    }
-    // DELAY (1s = 1000)
+    const signature = security.sign({
+      answer: option,
+      questionToken,
+      timestamp: Date.now(),
+      nonce: Math.random().toString(36)
+    }, process.env.NEXT_PUBLIC_CLIENT_KEY);
 
-    // TODO: MAKE ENV VARIABLE
-    setTimeout(() => {
-      fetchQuestion();
-    }, 1000);
+    const requestData = security.watermarkRequest({
+      answer: option,
+      questionToken,
+      signature,
+      clientData: {
+        ...clientData,
+        ...deviceData
+      }
+    });
+
+    const res = await fetch('/api/submitAnswer', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'X-Device-Fingerprint': await generateDeviceFingerprint()
+      },
+      body: JSON.stringify(requestData)
+    });
+    const data = await res.json();
+    setScore(data.score);
+    setShowFeedback(true);
+    
+    setTimeout(fetchQuestion, 1000);
   };
 
   return (
