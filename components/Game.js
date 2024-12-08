@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { security } from '../lib/security';
 
 export default function Game({ onGameEnd }) {
+  const [sessionId, setSessionId] = useState(null);
   const [question, setQuestion] = useState(null);
   const [options, setOptions] = useState([]);
-  const [answer, setAnswer] = useState('');
+  const [questionToken, setQuestionToken] = useState(null);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(parseInt(process.env.NEXT_PUBLIC_TIMER_DURATION));
   const [selectedOption, setSelectedOption] = useState('');
@@ -14,16 +16,65 @@ export default function Game({ onGameEnd }) {
   const [answerHash, setAnswerHash] = useState('');
 
   useEffect(() => {
-    fetchQuestion();
+    startGame();
   }, []);
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      onGameEnd(score);
+      onGameEnd(score, correctAnswers);
     }
     const timer = setInterval(() => setTimeLeft((t) => t - 1), 1000);
     return () => clearInterval(timer);
   }, [timeLeft]);
+
+  useEffect(() => {
+    const trackBehavior = () => {
+      setClientData(prev => ({
+        ...prev,
+        mouseMovements: prev.mouseMovements + 1
+      }));
+    };
+    
+    const trackKeyPress = () => {
+      setClientData(prev => ({
+        ...prev,
+        keyPresses: prev.keyPresses + 1
+      }));
+    };
+
+    window.addEventListener('mousemove', trackBehavior);
+    window.addEventListener('keydown', trackKeyPress);
+
+    return () => {
+      window.removeEventListener('mousemove', trackBehavior);
+      window.removeEventListener('keydown', trackKeyPress);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Request device sensors
+    if (window.DeviceMotionEvent) {
+      window.addEventListener('devicemotion', handleMotion);
+    }
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener('deviceorientation', handleOrientation);
+    }
+    
+    // Track touch dynamics
+    window.addEventListener('touchstart', handleTouch);
+    window.addEventListener('touchend', handleTouch);
+
+    return () => {
+      // ...cleanup listeners...
+    };
+  }, []);
+
+  const startGame = async () => {
+    const res = await fetch('/api/startGame', { method: 'POST' });
+    const data = await res.json();
+    setSessionId(data.sessionId);
+    fetchQuestion();
+  };
 
   const fetchQuestion = async () => {
     const res = await fetch('/api/getQuestion');

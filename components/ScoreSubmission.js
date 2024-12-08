@@ -8,7 +8,7 @@ export default function ScoreSubmission({ score, onSubmit }) {
     await fetch('/api/submitScore', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, score }),
+      body: JSON.stringify({ name, score, correctAnswers }),
     });
     onSubmit();
   };

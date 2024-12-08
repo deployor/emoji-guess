@@ -5,6 +5,23 @@ export default async (req, res) => {
 
   if (req.method === 'POST') {
     try {
+      // Validate score server-side
+      const { data: questions, error: questionError } = await supabase
+        .from('questions')
+        .select('id, answer')
+        .in('id', correctAnswers.map(answer => answer.questionId));
+
+      if (questionError) throw questionError;
+
+      const validScore = correctAnswers.reduce((acc, answer) => {
+        const question = questions.find(q => q.id === answer.questionId);
+        return acc + (question && question.answer === answer.answer ? 1 : 0);
+      }, 0);
+
+      if (validScore !== score) {
+        return res.status(400).json({ error: 'Invalid score' });
+      }
+
       const { data, error } = await supabase
         .from('scores')
         .insert([{ name, score }])
