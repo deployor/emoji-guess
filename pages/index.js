@@ -7,14 +7,16 @@ import Snowfall from '../components/Snowfall';
 export default function Home() {
   const [view, setView] = useState('game'); // 'game', 'submit', 'leaderboard'
   const [score, setScore] = useState(0);
+  const [correctAnswers, setCorrectAnswers] = useState([]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-game-gradient-from to-game-gradient-to">
       <Snowfall />
       {view === 'game' && (
         <Game
-          onGameEnd={(finalScore) => {
+          onGameEnd={(finalScore, answers) => {
             setScore(finalScore);
+            setCorrectAnswers(answers);
             setView('submit');
           }}
         />
@@ -22,6 +24,7 @@ export default function Home() {
       {view === 'submit' && (
         <ScoreSubmission
           score={score}
+          correctAnswers={correctAnswers}
           onSubmit={() => setView('leaderboard')}
         />
       )}
