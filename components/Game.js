@@ -8,6 +8,10 @@ export default function Game({ onGameEnd }) {
   const [timeLeft, setTimeLeft] = useState(parseInt(process.env.NEXT_PUBLIC_TIMER_DURATION));
   const [selectedOption, setSelectedOption] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);
+  const [questionId, setQuestionId] = useState('');
+  const [correctAnswer, setCorrectAnswer] = useState('');
+  const [token, setToken] = useState('');
+  const [answerHash, setAnswerHash] = useState('');
 
   useEffect(() => {
     fetchQuestion();
@@ -26,20 +30,25 @@ export default function Game({ onGameEnd }) {
     const data = await res.json();
     setQuestion(data.emoji);
     setOptions(data.options);
-    setAnswer(data.answer);
+    setAnswerHash(data.answerHash);
     setSelectedOption('');
     setShowFeedback(false);
+    setCorrectAnswer(data.correctAnswer);
+    setToken(data.token);
   };
 
-  const handleAnswer = (option) => {
+  const handleAnswer = async (option) => {
     setSelectedOption(option);
-    setShowFeedback(true);
-    if (option === answer) {
+    const res = await fetch('/api/submitAnswer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ selectedOption: option, answerHash }),
+    });
+    const data = await res.json();
+    if (data.correct) {
       setScore(score + 1);
     }
-    // DELAY (1s = 1000)
-
-    // TODO: MAKE ENV VARIABLE
+    setShowFeedback(true);
     setTimeout(() => {
       fetchQuestion();
     }, 1000);

@@ -1,7 +1,5 @@
 import { useState } from 'react';
 
-// TODO: MAKE SAFE ( THIS IS NOT SAFE  LOLLLLL)
-
 export default function ScoreSubmission({ score, onSubmit }) {
   const [name, setName] = useState('');
 
