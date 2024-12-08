@@ -14,6 +14,7 @@ export default function Game({ onGameEnd }) {
   const [correctAnswer, setCorrectAnswer] = useState('');
   const [token, setToken] = useState('');
   const [answerHash, setAnswerHash] = useState('');
+  const [correctAnswers, setCorrectAnswers] = useState([]);
 
   useEffect(() => {
     startGame();
@@ -98,6 +99,7 @@ export default function Game({ onGameEnd }) {
     const data = await res.json();
     if (data.correct) {
       setScore(score + 1);
+      setCorrectAnswers(prev => [...prev, { answer: option }]);
     }
     setShowFeedback(true);
     setTimeout(() => {

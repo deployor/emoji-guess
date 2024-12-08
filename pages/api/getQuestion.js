@@ -1,7 +1,6 @@
-import { v4 as uuidv4 } from 'uuid';
 import crypto from 'crypto';
 
-const handler = (req, res) => {
+export default function handler(req, res) {
   const questions = [
     {
       emoji: '🍔💔',
@@ -71,7 +70,6 @@ const handler = (req, res) => {
   const options = [...question.distractors, question.answer];
   options.sort(() => Math.random() - 0.5);
 
-  // Create a hash of the answer instead of using JWT
   const answerHash = crypto
     .createHash('sha256')
     .update(question.answer + process.env.SESSION_PASSWORD)
@@ -80,8 +78,6 @@ const handler = (req, res) => {
   res.status(200).json({
     emoji: question.emoji,
     options,
-    answerHash,
+    answerHash
   });
-};
-
-export default handler;
+}
