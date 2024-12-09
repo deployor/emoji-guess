@@ -43,6 +43,7 @@ export default function PowerUps({ onPowerUpClick }) {
             transition: 'transform 0.1s',
           }}
         >
+          <div className="power-up-trail"></div>
           {powerUp.type}
         </button>
       ))}

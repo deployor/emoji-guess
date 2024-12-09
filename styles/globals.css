@@ -35,8 +35,13 @@ body {
   }
 
   .christmas-card {
-    @apply bg-gray-900/90 backdrop-blur-sm border-2 border-gold/30 
+    @apply relative overflow-hidden bg-gray-900/90 backdrop-blur-sm border-2 border-gold/30 
            rounded-xl p-6 shadow-lg;
+  }
+
+  .nav-link {
+    @apply block px-4 py-2 text-white hover:bg-gray-800/50 rounded transition-colors
+           flex items-center gap-2;
   }
 }
 
@@ -88,3 +93,98 @@ body {
 .animate-streak {
   animation: streak 1.5s ease-in-out;
 }
+
+@keyframes sleigh-ride {
+  from {
+    transform: translateX(100vw) translateY(sin(0deg) * 10px);
+  }
+  to {
+    transform: translateX(-100%) translateY(sin(180deg) * 10px);
+  }
+}
+
+.animate-sleigh-ride {
+  animation: sleigh-ride 15s linear infinite;
+}
+
+@keyframes sleigh-crossing {
+  0% {
+    transform: translateX(-100px) translateY(calc(sin(0deg) * 10px));
+  }
+  50% {
+    transform: translateX(50vw) translateY(calc(sin(180deg) * 10px));
+  }
+  100% {
+    transform: translateX(calc(100vw + 100px)) translateY(calc(sin(360deg) * 10px));
+  }
+}
+
+.animate-sleigh-crossing {
+  animation: sleigh-crossing 15s linear infinite;
+}
+
+@keyframes sleigh-reverse {
+  0% {
+    transform: translateX(calc(100vw + 100px)) translateY(calc(sin(0deg) * 15px));
+    opacity: 0;
+  }
+  10% { opacity: 0.7; }
+  90% { opacity: 0.7; }
+  100% {
+    transform: translateX(-100px) translateY(calc(sin(360deg) * 15px));
+    opacity: 0;
+  }
+}
+
+.animate-sleigh-reverse {
+  animation: sleigh-reverse 20s linear infinite;
+}
+
+/* Remove moving gradient */
+.christmas-card::before {
+  display: none;
+}
+
+/* Remove glow effect */
+.sleigh-glow {
+  display: none;
+}
+
+.power-up-trail {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 20px;
+  background: linear-gradient(to top, transparent, white);
+  transform: translateX(-50%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.trailing-fade {
+  opacity: 0.6;
+  filter: blur(1px);
+}
+
+.trailing-sparkle {
+  opacity: 0.5;
+  margin-left: 4px;
+}
+
+/* Simplify sparkle effect */
+.bg-holiday-green::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Remove these animations */
+@keyframes sparkle-pulse { /* Remove */ }
+@keyframes enhanced-sparkle { /* Remove */ }
+@keyframes card-shine { /* Remove */ }

@@ -114,10 +114,14 @@ export default function Game({ onGameEnd }) {
   };
 
   return (
-    <div className="text-center p-8 max-w-4xl mx-auto christmas-card relative">
+    <div className="text-center p-8 max-w-4xl mx-auto christmas-card relative z-20">
       <PowerUps onPowerUpClick={handlePowerUp} />
       <div className="text-gold text-4xl mb-4 font-display">
-        ❄️🎄 Emoji Quiz for HC 🎄⛄
+        <span>❄️</span>
+        <span>🎄</span>
+        {' Emoji Quiz for HC '}
+        <span>🎄</span>
+        <span>⛄</span>
       </div>
       <h1 className="text-8xl mb-12 animate-bounce-slow">{question}</h1>
       
@@ -174,7 +178,7 @@ export default function Game({ onGameEnd }) {
         </div>
       </div>
       
-      {/* Add debug info in development */}
+      {/* Debug dev */}
       {process.env.NODE_ENV === 'development' && (
         <div className="fixed bottom-0 left-0 bg-black/50 text-xs p-2 text-white">
           Answers: {correctAnswers.length} | Score: {serverScore} | Streak: {streak}
