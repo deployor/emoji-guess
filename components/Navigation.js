@@ -29,7 +29,7 @@ export default function Navigation() {
               📖 How to Play
             </Link>
             <Link href="/stats" className="nav-link">
-              📊 Your Stats
+              📊 Stats
             </Link>
             <Link href="/settings" className="nav-link">
               ⚙️ Settings
