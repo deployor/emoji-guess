@@ -6,7 +6,7 @@ export default function PowerUps({ onPowerUpClick }) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (Math.random() < 0.7 && powerUps.length < 1) {
+      if (Math.random() < 0.1 && powerUps.length < 1) {
         const newPowerUp = {
           id: Date.now(),
           type: powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)],
