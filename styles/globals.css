@@ -39,3 +39,52 @@ body {
            rounded-xl p-6 shadow-lg;
   }
 }
+
+@keyframes fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(50vh) rotate(180deg);
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+  }
+}
+
+@keyframes quickFall {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+@keyframes fallAndWobble {
+  0% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(25vh) translateX(50px);
+  }
+  50% {
+    transform: translateY(50vh) translateX(-50px);
+  }
+  75% {
+    transform: translateY(75vh) translateX(50px);
+  }
+  100% {
+    transform: translateY(100vh) translateX(0);
+  }
+}
+
+@keyframes streak {
+  0% { transform: scale(0.5); opacity: 0; }
+  50% { transform: scale(1.5); opacity: 1; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+.animate-streak {
+  animation: streak 1.5s ease-in-out;
+}

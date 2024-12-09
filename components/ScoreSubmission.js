@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function ScoreSubmission({ score, onSubmit }) {
+export default function ScoreSubmission({ score, correctAnswers, onSubmit }) {
   const [name, setName] = useState('');
 
   const handleSubmit = async () => {
@@ -8,7 +8,10 @@ export default function ScoreSubmission({ score, onSubmit }) {
     await fetch('/api/submitScore', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, score, correctAnswers }),
+      body: JSON.stringify({ 
+        name,
+        sessionId: document.cookie.match(/session-id=([^;]+)/)?.[1]
+      }),
     });
     onSubmit();
   };

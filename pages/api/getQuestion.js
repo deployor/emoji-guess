@@ -70,14 +70,16 @@ export default function handler(req, res) {
   const options = [...question.distractors, question.answer];
   options.sort(() => Math.random() - 0.5);
 
+  const timestamp = Date.now();
   const answerHash = crypto
     .createHash('sha256')
-    .update(question.answer + process.env.SESSION_PASSWORD)
+    .update(question.answer + process.env.ANSWER_SECRET + timestamp)
     .digest('hex');
 
   res.status(200).json({
     emoji: question.emoji,
     options,
-    answerHash
+    answerHash,
+    timestamp
   });
 }

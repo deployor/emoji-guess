@@ -57,6 +57,17 @@ module.exports = {
         snowfall: {
           '0%': { transform: 'translateY(-10vh) translateX(0)' },
           '100%': { transform: 'translateY(100vh) translateX(20px)' }
+        },
+        shine: {
+          '0%': { backgroundColor: 'rgba(139, 92, 246, 0.1)' },
+          '50%': { backgroundColor: 'rgba(139, 92, 246, 0.2)' },
+          '100%': { backgroundColor: 'rgba(139, 92, 246, 0.1)' }
+        },
+        ping: {
+          '75%, 100%': {
+            transform: 'scale(2)',
+            opacity: '0'
+          }
         }
       },
       animation: {
@@ -65,7 +76,9 @@ module.exports = {
         'scale': 'scale 2s infinite',
         'snow-slow': 'snowfall 10s linear infinite',
         'snow-medium': 'snowfall 7s linear infinite',
-        'snow-fast': 'snowfall 5s linear infinite'
+        'snow-fast': 'snowfall 5s linear infinite',
+        'shine': 'shine 2s linear infinite',
+        'ping': 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite',
       },
     },
   },
